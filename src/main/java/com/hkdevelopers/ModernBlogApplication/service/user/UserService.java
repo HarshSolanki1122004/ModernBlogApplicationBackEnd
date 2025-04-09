@@ -1,5 +1,6 @@
 package com.hkdevelopers.ModernBlogApplication.service.user;
 import com.hkdevelopers.ModernBlogApplication.dto.user.LoginRequest;
+import com.hkdevelopers.ModernBlogApplication.dto.user.LoginResponse;
 import com.hkdevelopers.ModernBlogApplication.exceptions.UserRegistrationAndLoginException;
 import com.hkdevelopers.ModernBlogApplication.model.user.User;
 import com.hkdevelopers.ModernBlogApplication.repository.user.UserRepository;
@@ -58,20 +59,28 @@ public class UserService {
         userRepository.save(user);
         return ResponseEntity.ok("Email verified successfully");
     }
-    public String loginUser(@Valid LoginRequest loginUserRequest){
-        User user = userRepository.findByEmail(loginUserRequest.getEmail()).orElseThrow(
-                ()-> new UserRegistrationAndLoginException("User Not Found"));
-        if (!user.isVerified()){
+    public LoginResponse loginUser(@Valid LoginRequest loginUserRequest){
+        User user = userRepository.findByEmail(loginUserRequest.getEmail())
+                .orElseThrow(() -> new UserRegistrationAndLoginException("User Not Found"));
+
+        if (!user.isVerified()) {
             throw new UserRegistrationAndLoginException("Email is not verified");
         }
-        if (!encoder.matches(loginUserRequest.getPassword(),user.getPassword())){
+
+        if (!encoder.matches(loginUserRequest.getPassword(), user.getPassword())) {
             throw new UserRegistrationAndLoginException("Invalid credentials");
         }
+
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginUserRequest.getEmail(),loginUserRequest.getPassword()));
-        if(!authentication.isAuthenticated()){
+                new UsernamePasswordAuthenticationToken(
+                        loginUserRequest.getEmail(), loginUserRequest.getPassword())
+        );
+
+        if (!authentication.isAuthenticated()) {
             throw new UserRegistrationAndLoginException("Bad Credentials");
         }
-        return jwtService.generateToken(loginUserRequest.getEmail());
+
+        String token = jwtService.generateToken(loginUserRequest.getEmail());
+        return new LoginResponse(token, user.getId());
     }
 }

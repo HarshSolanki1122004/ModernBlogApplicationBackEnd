@@ -1,5 +1,6 @@
 package com.hkdevelopers.ModernBlogApplication.controller.user;
 import com.hkdevelopers.ModernBlogApplication.dto.user.LoginRequest;
+import com.hkdevelopers.ModernBlogApplication.dto.user.LoginResponse;
 import com.hkdevelopers.ModernBlogApplication.model.user.User;
 import com.hkdevelopers.ModernBlogApplication.service.user.EmailService;
 import com.hkdevelopers.ModernBlogApplication.service.user.UserService;
@@ -25,11 +26,8 @@ public class UserController {
         return userService.verifyUser(token);
     }
     @PostMapping("/login")
-    public ResponseEntity<String> loginUser(@Valid @RequestBody LoginRequest loginUserRequest){
-        String success = userService.loginUser(loginUserRequest);
-        if (!success.isEmpty()){
-            return ResponseEntity.ok(success);
-        }
-        return null;
+    public ResponseEntity<LoginResponse> loginUser(@Valid @RequestBody LoginRequest loginUserRequest) {
+        LoginResponse response = userService.loginUser(loginUserRequest);
+        return ResponseEntity.ok(response);
     }
 }

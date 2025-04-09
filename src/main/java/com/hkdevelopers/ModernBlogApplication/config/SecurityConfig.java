@@ -24,6 +24,9 @@ public class SecurityConfig {
     private final MyUserDetailService myUserDetailService;
     private final JwtFilter jwtFilter;
 
+    @Value("${frontend.domain}")
+    private String frontEndDomainName;
+
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder(){
         return new BCryptPasswordEncoder(12);
@@ -36,7 +39,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/users/login", "/users/register" ,"users/verify").permitAll()
+                        .requestMatchers("/users/login", "/users/register" ,"/users/verify").permitAll()
                         .anyRequest().authenticated() // Secure all other endpoints
                 )
                 .httpBasic(Customizer.withDefaults())
@@ -51,6 +54,7 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.addAllowedMethod("*");
         configuration.addAllowedHeader("*");
+        configuration.addAllowedOrigin(frontEndDomainName);
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

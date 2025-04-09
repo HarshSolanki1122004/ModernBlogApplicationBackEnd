@@ -1,4 +1,6 @@
 package com.hkdevelopers.ModernBlogApplication.model.blog;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.hkdevelopers.ModernBlogApplication.model.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -34,4 +36,10 @@ public class Blog {
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    @JsonIgnore
+    private User user;
+
 }

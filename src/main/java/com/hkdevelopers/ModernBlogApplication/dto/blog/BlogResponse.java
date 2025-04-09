@@ -15,5 +15,6 @@ public class BlogResponse {
     private String content;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private Long userId;
 
 }
